@@ -37,18 +37,27 @@ using namespace std;
          1 2 3 3
 */
 class Solution {
-    public:
-        int combinationSum4(vector<int>& nums, int target) {
-            vector<unsigned long long> dp(target + 1,0);
-            dp[0] = 1;
-            for(int i = 1;i<=target; i++){
-                for(int num:nums)
-                    if(num <= i)
-                        dp[i] += dp[i - num];
-            }
-            return dp[target];
+public:
+    int countGoodStrings(int low, int high, int zero, int one) {
+        //定义状态:dp[i]表示长度为i的字符串组成的这和个数
+        //状态装一dp[i]一定是由直接zero或者one组成
+        //再就是字符串通过zero和one组合而成的
+        const unsigned long long yushu = 1e9 + 7;
+        vector<unsigned long long> dp(high+1,0);
+        dp[0] = 1;
+        for(int i = 1;i<=high; i++){
+            if(zero <= i)
+                dp[i] = (dp[i]+dp[i - zero])%yushu;
+            if(one <= i)
+                dp[i] = (dp[i] + dp[i - one])%yushu;
         }
-    };
+        unsigned long long res = 0;
+        for(int i = low;i<=high ;i++){
+            res = (res + dp[i]) % yushu;
+        }
+        return res;
+    }
+};
 
 int main(){
     vector<int> heigt = {1,8,6,2,5,4,8,3,7};
