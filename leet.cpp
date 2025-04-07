@@ -1,5 +1,7 @@
 #include<vector>
 #include<string>
+#include<algorithm>
+#include<iostream>
 
 using namespace std;
 
@@ -12,26 +14,55 @@ using namespace std;
 */
 class Solution {
 public:
-    int rob(vector<int>& nums) {
-        int len = nums.size();
-        vector<int> dp(len + 2 ,0);
+    int deleteAndEarn(vector<int>& nums) {
+        //对nums进行处理像打家劫舍一样
+        std::sort(nums.begin(),nums.end());
+        vector<int> rob;
+        for(int i = 0;i<nums.size() - 1;i++){
+            int now_num = nums[i];//当前的数字是几
+            //这里有可能溢出注意(判断后面的是不是应该加个0)
+            if(now_num != nums[i+1] && (now_num + 1) != nums[i+1])
+            {
+                rob.emplace_back(nums[i]);
+                rob.emplace_back(0);
+            }else{
+                rob.emplace_back(nums[i]);
+            }
+        }
+        rob.emplace_back(*nums.rbegin());
+        // for(int i = 0;i<rob.size();i++)
+        //     std::cout<<rob[i]<<' ';
+        vector<int> new_rob;
+        //将相邻的同种数字相加
+        int now_num = rob[0];
+        int now_times = 0;
+        for(int i = 0;i < rob.size();i++){
+            if(now_num != rob[i]){
+                new_rob.emplace_back(now_num * now_times);
+                now_num = rob[i];
+                now_times = 1;
+            }else{
+                now_times++;
+            }
+        }
+        new_rob.emplace_back(now_num * now_times);
+        new_rob.emplace_back(0);
 
-        for(int i = 2; i<=len + 1; i++){
-            dp[i] = max(dp[i - 1],nums[i - 2] + dp[i - 2]);
+        for(int num:new_rob)
+            std::cout<<num<<' ';
+
+        int len = new_rob.size();
+        vector<int> dp(len + 2,0);
+        for(int i = 2;i<=len+1;i++){
+            dp[i] = max(dp[i-1],new_rob[i-2]+dp[i-2]);
         }
         return *dp.rbegin();
     }
-// private:
-//     int dfs(int i,vector<int>& nums){
-//         if(i<0)
-//             return 0;
-//         return max(dfs(i-1,nums),dfs(i-2,nums)+nums[i]);
-//     }
 };
 
 int main(){
-    vector<int> heigt = {1,8,6,2,5,4,8,3,7};
+    vector<int> nums = {2,4,3};
     Solution s;
-    
+    s.deleteAndEarn(nums);
     return 0;
 }
