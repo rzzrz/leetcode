@@ -1,3 +1,4 @@
+#include <climits>
 #include <cstddef>
 #include <memory>
 #include<vector>
@@ -8,42 +9,40 @@
 #include<queue>
 using namespace std;
 
-
-
 class Solution {
 public:
-    using ll = long long;
-
-    int maximumCostSubstring(string s, string chars, vector<int>& vals) {
-        // 首先通过chars和vals整理一个各个字母对应的价值
-        // 之后使用最大子数组和来计算最大开销，dp
-        vector<int> map(26);
-        // 首先默认所有字母都不在chars中
-        for(int i = 0;i <26;i++){
-            map[i] = i+1;
-        }
-        // 使用chars对map更新
-        int i = 0;
-        for(char c : chars){
-            map[c - 'a'] = vals[i++]; 
-        }
-        // 动态规划阶段
-        int len = s.size();
-        vector<int> dp(len + 1,0);
-        for(int i = 1;i <= len;i++){
-            dp[i] = max(dp[i - 1] + map[s[i-1] - 'a'],map[s[i-1] - 'a']);
-        }
-        return *max_element(dp.begin(),dp.end());
+  int minPathSum(vector<vector<int>> &grid) {
+    // 首先做一个二维的dp
+    // dp[i][j]就是到达当前位置时的最大值
+    // 规则是当前这个节点一定是从他的上面或者他的左侧进入的
+    // 所以状态方程就应该是从左侧或者上册进行选择最大值
+    // dp[i][j] = min(dp[i-1][j],dp[i][j-1])
+    int row = grid.size();
+    int clow = grid[0].size();
+    vector<vector<int>> dp(row + 1, vector<int>(clow + 1, 0));
+    for (int i = 2; i <= row; i++) {
+      dp[i][0] = INT_MAX;
     }
+    for (int i = 2; i <= clow; i++) {
+      dp[0][i] = INT_MAX;
+    }
+    
+    for (int i = 1; i <= row; i++) {
+      for (int j = 1; j <= clow; j++) {
+        dp[i][j] = min(dp[i - 1][j] + grid[i - 1][j - 1],
+                       dp[i][j - 1] + grid[i - 1][j - 1]);
+      }
+    }
+    return dp[row][clow];
+  }
 };
 
 int main(){
-    vector<int> nums = {-2,1,-3,4,-1,2,1,-5,4};
-    Solution s;
-    string str = "hghhghgghh";
-    string chars = "hg";
-    vector<int> vals = {2,3};
-    std::cout<<s.maximumCostSubstring(str, chars,vals);
-    std::cout<<"endl"<<endl;
-    return 0;
+  vector<int> nums = {-3, -5, -3, -2, -6, 3, 10, -10, -8, -3,
+                      0,  10, 3,  -5, 8,  7, -9, -9,  5,  -8};
+
+  Solution s;
+  std::cout << s.maxAbsoluteSum(nums); 
+  std::cout << "endl" << endl;
+  return 0;
 }
