@@ -11,24 +11,27 @@ using namespace std;
 
 class Solution {
 public:
-  int uniquePathsWithObstacles(vector<vector<int>> &obstacleGrid) {
-    int m = obstacleGrid.size();
-    int n = obstacleGrid[0].size();
+  bool canPartition(vector<int> &nums) {
+    // 统计数字总和之后除以二这样就变成了0 - 1背包问题
+    // 之后使用动态规划进行查找数组中是否有能组成满足
+    // 把背包装满的组合
+    // 状态转移方程还 dp[j] = max(dp[j],dp[j - nums[i]] + nums[i])
 
-    // obstacleGrid.insert(obstacleGrid.begin(), vector<int>(n, 0));
-    // for (vector<int> &vec : obstacleGrid) {
-    //   vec.insert(vec.begin(),0);
-    // }
+    int total = 0;
+    for (int num : nums)
+      total += num;
+    if (total % 2)//奇数
+      return false;
+    int target = total / 2;
+    int len = nums.size();
 
-    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
-    dp[1][0] = 1;
-    for (int i = 1; i <= m; i++) {
-      for (int j = 1; j <= n; j++) {
-        if (!obstacleGrid[i-1][j-1])
-          dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+    vector<int> dp(target + 1, 0);
+    for (int i = 0; i < len; i++) {//物品
+      for (int j = target; j >= nums[i]; j--) {//dp数组
+        dp[j] = max(dp[j],dp[j-nums[i]] + nums[i]);
       }
     }
-    return dp[m][n];
+    return dp[target] == target;
   }
 };
 
