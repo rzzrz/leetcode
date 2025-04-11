@@ -1,46 +1,41 @@
+#include <algorithm>
 #include <climits>
 #include <cstddef>
+#include <iostream>
 #include <memory>
-#include<vector>
-#include<string>
-#include<algorithm>
-#include<iostream>
-#include<unordered_map>
-#include<queue>
+#include <queue>
+#include <string>
+#include <unordered_map>
+#include <vector>
 using namespace std;
 
 class Solution {
 public:
-  bool canPartition(vector<int> &nums) {
-    // 统计数字总和之后除以二这样就变成了0 - 1背包问题
-    // 之后使用动态规划进行查找数组中是否有能组成满足
-    // 把背包装满的组合
-    // 状态转移方程还 dp[j] = max(dp[j],dp[j - nums[i]] + nums[i])
+  int findTargetSumWays(vector<int> &nums, int target) {
+    dfs(nums, target, 0, nums.size() - 1);
+    return res;
+  }
 
-    int total = 0;
-    for (int num : nums)
-      total += num;
-    if (total % 2)//奇数
-      return false;
-    int target = total / 2;
-    int len = nums.size();
-
-    vector<int> dp(target + 1, 0);
-    for (int i = 0; i < len; i++) {//物品
-      for (int j = target; j >= nums[i]; j--) {//dp数组
-        dp[j] = max(dp[j],dp[j-nums[i]] + nums[i]);
-      }
+private:
+  int res = 0;
+  void dfs(vector<int> &nums, int target, int tmp, int i) {
+    if (i < 0) {
+      if (tmp == target)
+        res++;
+      return;
     }
-    return dp[target] == target;
+      
+
+    dfs(nums, target, tmp + nums[i], i - 1);
+    dfs(nums, target, tmp - nums[i], i - 1);
   }
 };
 
-int main(){
-  vector<int> nums = {-3, -5, -3, -2, -6, 3, 10, -10, -8, -3,
-                      0,  10, 3,  -5, 8,  7, -9, -9,  5,  -8};
+int main() {
+  vector<int> nums = {1,1,1,1,1};
 
   Solution s;
-  std::cout << s.maxAbsoluteSum(nums); 
+  std::cout << s.findTargetSumWays(nums,3);
   std::cout << "endl" << endl;
   return 0;
 }
