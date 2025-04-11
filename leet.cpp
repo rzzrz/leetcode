@@ -11,30 +11,27 @@ using namespace std;
 
 class Solution {
 public:
-  int minPathSum(vector<vector<int>> &grid) {
-    // 首先做一个二维的dp
-    // dp[i][j]就是到达当前位置时的最大值
-    // 规则是当前这个节点一定是从他的上面或者他的左侧进入的
-    // 所以状态方程就应该是从左侧或者上册进行选择最大值
-    // dp[i][j] = min(dp[i-1][j],dp[i][j-1])
-    int row = grid.size();
-    int clow = grid[0].size();
-    vector<vector<int>> dp(row + 1, vector<int>(clow + 1, 0));
-    for (int i = 2; i <= row; i++) {
-      dp[i][0] = INT_MAX;
-    }
-    for (int i = 2; i <= clow; i++) {
-      dp[0][i] = INT_MAX;
-    }
-    
-    for (int i = 1; i <= row; i++) {
-      for (int j = 1; j <= clow; j++) {
-        dp[i][j] = min(dp[i - 1][j] + grid[i - 1][j - 1],
-                       dp[i][j - 1] + grid[i - 1][j - 1]);
+  int uniquePaths(int m, int n) {
+    // 进行二维dp就可以
+    // 状态定义dp[i][j] 表示机器人走i,j位置的路径数
+    // 状态转移方程
+    // dp[i][j] = dp[i-1][j] + dp[i][j-1];
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    dp[1][0] = 1;
+    for (int i = 1; i <= m; i++) {
+      for (int j = 1; j <= n; j++) {
+        dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
       }
     }
-    return dp[row][clow];
+    return dp[m][n];
   }
+
+// private:
+//   int dfs(int i ,int j) {
+//     if ()
+//       return 1;
+//     return dfs(i-1,j)+dfs(i,j-1);
+//   }
 };
 
 int main(){
