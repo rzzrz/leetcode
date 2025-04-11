@@ -11,27 +11,25 @@ using namespace std;
 
 class Solution {
 public:
-  int uniquePaths(int m, int n) {
-    // 进行二维dp就可以
-    // 状态定义dp[i][j] 表示机器人走i,j位置的路径数
-    // 状态转移方程
-    // dp[i][j] = dp[i-1][j] + dp[i][j-1];
+  int uniquePathsWithObstacles(vector<vector<int>> &obstacleGrid) {
+    int m = obstacleGrid.size();
+    int n = obstacleGrid[0].size();
+
+    // obstacleGrid.insert(obstacleGrid.begin(), vector<int>(n, 0));
+    // for (vector<int> &vec : obstacleGrid) {
+    //   vec.insert(vec.begin(),0);
+    // }
+
     vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
     dp[1][0] = 1;
     for (int i = 1; i <= m; i++) {
       for (int j = 1; j <= n; j++) {
-        dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+        if (!obstacleGrid[i-1][j-1])
+          dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
       }
     }
     return dp[m][n];
   }
-
-// private:
-//   int dfs(int i ,int j) {
-//     if ()
-//       return 1;
-//     return dfs(i-1,j)+dfs(i,j-1);
-//   }
 };
 
 int main(){
