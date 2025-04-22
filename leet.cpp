@@ -6,42 +6,56 @@ using namespace std;
 
 class Solution {
 public:
-    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
-      // 使用bfs进行便利 用一个数组维护当前传播距离
-      int n = grid.size();
-      std::vector<std::vector<int>> vec(n,vector<int>(n,1));
-      std::queue<pair<int, int>> q;
+  int maxDistance(vector<vector<int>> &grid) {
+    // 从每个陆地向海洋扩散 返回的事曼哈顿距离所以bfs的距离就是返回值
+    // 设立一个距离数组 在更新数组的时候要 要烤炉上一次的值
+    // 保留这次更新和上次更新中最小的值
 
-      // 方向数组
-      int dx[8] = {-1, -1, -1, 0, 0, +1, +1, +1};
-      int dy[8] = {-1, 0, +1, -1, +1, -1, 0, +1};
+    std::queue<pair<int, int>> q;
 
-      if (grid[0][0])
-        return -1;
+    // 方向数组
+    int dx[4] = {-1, +1, 0, 0};
+    int dy[4] = {0,0,-1,+1};
 
-      q.push({0, 0});
-      vec[0][0] = 1;
-      
-      while (!q.empty()) {
-        pair<int, int> now_pos = q.front();
-        q.pop();
+    int n = grid.size();
+    // 记录距离
+    std::vector<std::vector<int>> vec(n, vector<int>(n, -1));
+    // 网格副本
+    std::vector<std::vector<int>> cp = grid;
+    auto reset = [&grid, &cp]() { cp = grid; };
 
-        if (now_pos.first == n-1 && now_pos.second == n-1)
-          return vec[now_pos.first][now_pos.second];
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        if (grid[i][j]) {
+          reset(); // 恢复副本
+          q.push({i, j});
 
-        for (int i = 0; i < 8; i++) {
-          int x = now_pos.first + dx[i];
-          int y = now_pos.second + dy[i];
+          while (!q.empty()) {
+            std::pair<int, int> pos = q.front();
+            q.pop();
 
-          if (x >= 0 && x < n && y >= 0 && y < n && grid[x][y] == 0) {
-            grid[x][y] = 1;
-            q.push({x, y});
-            vec[x][y] = vec[now_pos.first][now_pos.second] + 1;
+            for (int u = 0; u < 4; u++) {
+              int x = pos.first + dx[u];
+              int y = pos.second + dy[u];
+              if (x >= 0 && x < n && y >= 0 && y < n && cp[x][y] == 0) {
+                q.push({x, y});
+                cp[x][y] = 1;                // 更新距离
+
+                vec[x][y] = vec[x][y] == -1 ? vec[pos.first][pos.second] + 1 :
+                                            min(vec[x][y],vec[pos.first][pos.second] + 1);
+              }
+            }
           }
         }
       }
-      return -1;
     }
+    int res = -1;
+    for (std::vector<int> &nums : vec) {
+      for (int num : nums)
+        res = max(res, num);
+    }
+    return res == -1?-1:++res;
+  }
 };
 
 int main() {
