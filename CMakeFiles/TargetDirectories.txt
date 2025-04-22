@@ -1,3 +1,0 @@
-/home/rzz-rz/leetcode/CMakeFiles/leet.dir
-/home/rzz-rz/leetcode/CMakeFiles/edit_cache.dir
-/home/rzz-rz/leetcode/CMakeFiles/rebuild_cache.dir
