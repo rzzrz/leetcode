@@ -4,51 +4,59 @@
 
 using namespace std;
 
-
-
 class Solution {
 public:
-  vector<vector<int>> updateMatrix(vector<vector<int>> &mat) {
+  int orangesRotting(vector<vector<int>> &grid) {
+    int n = grid.size();
+    int m = grid[0].size();
 
-    std::queue<pair<int, int>> q;
-
-    // 方向数组
     int dx[4] = {-1, +1, 0, 0};
     int dy[4] = {0, 0, -1, +1};
 
-    int n = mat.size();
-    int m = mat[0].size();
-    // 记录距离
-    std::vector<std::vector<int>> vec(n, vector<int>(m, 0));
-    // 网格副本
-    for (int i = 0; i < n; i++) {
+    std::queue<pair<int, int>> q;
+
+    int vec[10][10];
+    for (int i = 0; i < 10; i++)
+      for (int j = 0; j < 10; j++)
+        vec[i][j] = 0;
+
+    for (int i = 0; i < n; i++)
       for (int j = 0; j < m; j++) {
-        if (!mat[i][j]) {
+        if (grid[i][j] == 2)
           q.push({i, j});
-          mat[i][j] = -1;
-        }
       }
-    }
+
+    int times = 0;
+    
     while (!q.empty()) {
-      std::pair<int, int> pos = q.front();
+      pair<int, int> pos = q.front();
       q.pop();
-      int x = pos.first;
-      int y = pos.second;
 
       for (int u = 0; u < 4; u++) {
-        int fx = x + dx[u];
-        int fy = y + dy[u];
+        int x = dx[u] + pos.first;
+        int y = dy[u] + pos.second;
 
-        if (fx >= 0 && fx < n && fy >= 0 && fy < m && mat[fx][fy] == 1) {
-          q.push({fx, fy});
-          mat[fx][fy] = -1;
-          vec[fx][fy] = vec[x][y] + 1;
-         }
+        if (x >= 0 && x < n && y >= 0 && y < m && grid[x][y] == 1) {
+          grid[x][y] = 2;
+          q.push({x, y});
+          vec[x][y] = vec[pos.first][pos.second] + 1;
+          times = max(times, vec[x][y]);
+        }
+        
       }
     }
-    return vec;
+
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < m; j++) {
+        if (grid[i][j] == 1)
+          return -1;
+      }
+    }
+
+    return times;
   }
 };
+
 
 int main() {
   vector<int> nums = {1,1,1,1,1};
