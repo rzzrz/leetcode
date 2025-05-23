@@ -1,58 +1,53 @@
-#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <iostream>
 #include <queue>
-
+#include <utility>
+#include <vector>
 using namespace std;
 
 class Solution {
 public:
-  vector<vector<int>> highestPeak(vector<vector<int>> &isWater) {
-    // 这道题和01矩阵很相似
-    // 把所有水域都加入队列中同步进行，然后进行高度增加
+  int findCircleNum(vector<vector<int>> &isConnected) {
+    // 并查集使用
+    int citicies = isConnected.size();
+    vector<int> parent(citicies);
+    for (int i = 0; i < citicies; i++)
+      parent[i] = i;
 
-    std::queue<pair<int, int>> q;
-    int m = isWater.size();
-    int n = isWater[0].size();
-
-    int dx[4] = {-1, +1, 0, 0};
-    int dy[4] = {0,0,-1,+1};
-
-    std::vector<std::vector<int>> height(m, std::vector<int>(n, 0));
-
-    for (int i = 0; i < m; i++) {
-      for (int j = 0; j < n; j++) {
-        if (isWater[i][j]) {
-          q.push({i, j});
-          isWater[i][j] = -1;
-        }
-          
+    for (int i = 0; i < citicies; i++) {
+      for (int j = i + 1; j < citicies; j++) {
+        if (isConnected[i][j])
+          union_set(parent, i, j);
       }
     }
-
-    while (!q.empty()) {
-      std::pair<int, int> pos = q.front();
-      q.pop();
-
-      for (int u = 0; u < 4; u++) {
-        int x = dx[u] + pos.first;
-        int y = dy[u] + pos.second;
-
-        if (x >= 0 && x < m && y >= 0 && y < n && isWater[x][y] == 0) {
-          q.push({x, y});
-          isWater[x][y] = -1;
-
-          height[x][y] = height[pos.first][pos.second] + 1;
-        }
-      }
+    int province = 0;
+    for (int i = 0; i < citicies; i++) {
+      if (parent[i] == i)
+        province++;
     }
-    return height;
+    return province;
+  }
+
+private:
+  int find(vector<int> &parent, int index) {
+    if (parent[index] != index)
+      parent[index] = find(parent, parent[index]);
+    return parent[index];
+  }
+  bool union_set(vector<int> &parent, int a, int b) {
+    int roota = find(parent, a);
+    int rootb = find(parent, b);
+    if (roota == rootb)
+      return false; // 在一个集合，不合并
+    parent[roota] = parent[b];
+    return true; // 合并在一起了
   }
 };
 
 int main() {
-  vector<int> nums = {1,1,1,1,1};
-
   Solution s;
-  //std::cout << s.findTargetSumWays(nums,3);
-  //std::cout << "endl" << endl;
+  std::vector<int> nums = {7, 12, 9, 8, 9, 15};
+  std::cout << s.findKOr(nums,4);
   return 0;
 }

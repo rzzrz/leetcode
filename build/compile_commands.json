@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/rzz-rz/leetcode/build",
+  "command": "/usr/bin/c++ -g -o CMakeFiles/leet.dir/leet.cpp.o -c /home/rzz-rz/leetcode/leet.cpp",
+  "file": "/home/rzz-rz/leetcode/leet.cpp",
+  "output": "CMakeFiles/leet.dir/leet.cpp.o"
+}
+]
