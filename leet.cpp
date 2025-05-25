@@ -8,46 +8,32 @@ using namespace std;
 
 class Solution {
 public:
-  int findCircleNum(vector<vector<int>> &isConnected) {
-    // 并查集使用
-    int citicies = isConnected.size();
-    vector<int> parent(citicies);
-    for (int i = 0; i < citicies; i++)
-      parent[i] = i;
-
-    for (int i = 0; i < citicies; i++) {
-      for (int j = i + 1; j < citicies; j++) {
-        if (isConnected[i][j])
-          union_set(parent, i, j);
-      }
-    }
-    int province = 0;
-    for (int i = 0; i < citicies; i++) {
-      if (parent[i] == i)
-        province++;
-    }
-    return province;
+  vector<vector<int>> allPathsSourceTarget(vector<vector<int>> &graph) {
+    memroy.push_back(0);
+    dfs(graph, 0);
+    return ret;
   }
 
+  void dfs(vector<vector<int>> &graph, int node) {
+    if ((graph.size() - 1)) {
+      ret.emplace_back(memroy);
+      return;
+    }
+    for (int i = 0; i < graph[node].size(); ++i) {
+      memroy.push_back(graph[node][i]);
+      dfs(graph, graph[node][i]);
+      memroy.pop_back();
+    }
+    return;
+  }
 private:
-  int find(vector<int> &parent, int index) {
-    if (parent[index] != index)
-      parent[index] = find(parent, parent[index]);
-    return parent[index];
-  }
-  bool union_set(vector<int> &parent, int a, int b) {
-    int roota = find(parent, a);
-    int rootb = find(parent, b);
-    if (roota == rootb)
-      return false; // 在一个集合，不合并
-    parent[roota] = parent[b];
-    return true; // 合并在一起了
-  }
+vector<int> memroy;
+vector<vector<int>> ret;
 };
 
 int main() {
   Solution s;
-  std::vector<int> nums = {7, 12, 9, 8, 9, 15};
-  std::cout << s.findKOr(nums,4);
+  std::vector<std::vector<int>> edge = {{0,1},{1,2},{2,0}};
+  std::cout << s.validPath(3,edge , 0, 2);
   return 0;
 }
